@@ -30,7 +30,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.lab1.ui.theme.Lab1Theme
+
+/*
+// Завдання 8 (Додатково): Спрощена реалізація ViewModel
+class MainViewModel : ViewModel() {
+    var message by mutableStateOf("Привіт! Це головна сторінка")
+    var count by mutableIntStateOf(0)
+    var studentInfo by mutableStateOf("Інформація про студента прихована")
+}
+*/
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +97,10 @@ enum class AppDestinations(
 }
 
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
+fun MainScreen(
+    modifier: Modifier = Modifier,
+    // viewModel: MainViewModel = viewModel()
+) {
     var message by remember { mutableStateOf("Привіт! Це головна сторінка") }
 
     Column(
@@ -98,11 +112,15 @@ fun MainScreen(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = message,
+            // text = viewModel.message,
             fontSize = 24.sp,
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Button(
-            onClick = { message = "Текст змінено після натискання!" },
+            onClick = {
+                message = "Текст змінено після натискання!"
+                // viewModel.message = "Текст змінено через ViewModel!"
+            },
             modifier = Modifier
                 .width(220.dp)
                 .height(50.dp)
@@ -113,7 +131,10 @@ fun MainScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CounterScreen(modifier: Modifier = Modifier) {
+fun CounterScreen(
+    modifier: Modifier = Modifier,
+    // viewModel: MainViewModel = viewModel()
+) {
     var count by rememberSaveable { mutableIntStateOf(0) }
 
     Column(
@@ -125,11 +146,15 @@ fun CounterScreen(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = "Кількість натискань: $count",
+            // text = "Кількість натискань: ${viewModel.count}",
             fontSize = 30.sp,
             modifier = Modifier.padding(bottom = 24.dp)
         )
         Button(
-            onClick = { count++ },
+            onClick = {
+                count++
+                // viewModel.count++
+            },
             modifier = Modifier
                 .width(160.dp)
                 .height(60.dp)
@@ -140,7 +165,10 @@ fun CounterScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun StudentScreen(modifier: Modifier = Modifier) {
+fun StudentScreen(
+    modifier: Modifier = Modifier,
+    // viewModel: MainViewModel = viewModel()
+) {
     var studentInfo by rememberSaveable { mutableStateOf("Інформація про студента прихована") }
 
     Column(
@@ -152,11 +180,15 @@ fun StudentScreen(modifier: Modifier = Modifier) {
     ) {
         Text(
             text = studentInfo,
+            // text = viewModel.studentInfo,
             fontSize = 18.sp,
             modifier = Modifier.padding(bottom = 12.dp)
         )
         Button(
-            onClick = { studentInfo = "Лабораторну роботу №1 виконано!" },
+            onClick = {
+                studentInfo = "Лабораторну роботу №1 виконано!"
+                // viewModel.studentInfo = "Лабораторну роботу №1 виконано (ViewModel)!"
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(text = "Показати статус", fontSize = 14.sp)
