@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class AppViewModel : ViewModel() {
 
-    // Класичний патерн інкапсуляції StateFlow (як у Demo2026 для myFavoritesText)
     private val _message = MutableStateFlow("Привіт! Це головна сторінка")
     val message: StateFlow<String> = _message.asStateFlow()
 
@@ -17,7 +16,6 @@ class AppViewModel : ViewModel() {
     private val _studentInfo = MutableStateFlow("Інформація про студента прихована")
     val studentInfo: StateFlow<String> = _studentInfo.asStateFlow()
 
-    // Методи оновлення стану
     fun updateMessage(newMessage: String) {
         _message.value = newMessage
     }

@@ -164,7 +164,6 @@ fun StudentScreen(
 ) {
     // var studentInfo by rememberSaveable { mutableStateOf("Інформація про студента прихована") }
 
-    // Варіант 2: Через ViewModel (StateFlow)
     val studentInfo by appViewModel.studentInfo.collectAsStateWithLifecycle()
 
     Column(
