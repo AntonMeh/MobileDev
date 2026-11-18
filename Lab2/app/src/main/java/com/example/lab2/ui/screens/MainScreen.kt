@@ -12,49 +12,61 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import com.example.lab2.AppViewModel
+
+sealed interface MainSubRoute {
+    data object SubScreen1 : MainSubRoute
+    data object SubScreen2 : MainSubRoute
+    data object SubScreen3 : MainSubRoute
+}
 
 @Composable
 fun MainScreen(
     modifier: Modifier = Modifier,
     appViewModel: AppViewModel = viewModel()
 ) {
-    val navController = rememberNavController()
+    val backStack = remember { mutableStateListOf<MainSubRoute>(MainSubRoute.SubScreen1) }
 
-    NavHost(
-        navController = navController,
-        startDestination = "subscreen_1",
-        modifier = modifier
-    ) {
-        composable("subscreen_1") {
-            MainSubScreen1(
-                appViewModel = appViewModel,
-                onNavigateToSecond = { navController.navigate("subscreen_2") }
-            )
-        }
+    NavDisplay(
+        backStack = backStack,
+        modifier = modifier,
+        onBack = {
+            if (backStack.size > 1) {
+                backStack.removeLastOrNull()
+            }
+        },
+        entryProvider = entryProvider {
+            entry<MainSubRoute.SubScreen1> {
+                MainSubScreen1(
+                    appViewModel = appViewModel,
+                    onNavigateToSecond = { backStack.add(MainSubRoute.SubScreen2) }
+                )
+            }
 
-        composable("subscreen_2") {
-            MainSubScreen2(
-                onNavigateToThird = { navController.navigate("subscreen_3") },
-                onBack = { navController.popBackStack() }
-            )
-        }
+            entry<MainSubRoute.SubScreen2> {
+                MainSubScreen2(
+                    onNavigateToThird = { backStack.add(MainSubRoute.SubScreen3) },
+                    onBack = { backStack.removeLastOrNull() }
+                )
+            }
 
-        composable("subscreen_3") {
-            MainSubScreen3(
-                onBack = { navController.popBackStack() }
-            )
+            entry<MainSubRoute.SubScreen3> {
+                MainSubScreen3(
+                    onBack = { backStack.removeLastOrNull() }
+                )
+            }
         }
-    }
+    )
 }
 
 @Composable
@@ -87,7 +99,7 @@ fun MainSubScreen1(
             Text(text = "Змінити текст", fontSize = 16.sp)
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
             onClick = onNavigateToSecond,
@@ -118,7 +130,7 @@ fun MainSubScreen2(
             modifier = Modifier.padding(bottom = 12.dp)
         )
         Text(
-            text = "Це довільна розмітка другого підекрана в межах вкладки «Головна».",
+            text = "Це довільна розмітка другого підекрана (Jetpack Navigation 3).",
             fontSize = 16.sp,
             modifier = Modifier.padding(bottom = 24.dp)
         )
@@ -161,7 +173,7 @@ fun MainSubScreen3(
             modifier = Modifier.padding(bottom = 12.dp)
         )
         Text(
-            text = "Ви успішно здійснили два переходи в межах одного екрана! Натисніть кнопку нижче або системний жест «Назад».",
+            text = "Ви успішно здійснили два переходи за допомогою Navigation 3! Натисніть кнопку нижче або системний жест «Назад».",
             fontSize = 16.sp,
             modifier = Modifier.padding(bottom = 24.dp)
         )
